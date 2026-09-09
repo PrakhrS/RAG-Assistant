@@ -1,0 +1,36 @@
+{
+  "name": "rag-assistant",
+  "version": "1.0.0",
+  "description": "RAG assistant that lets users ask questions over PDFs, doc files, notes",
+  "keywords": [
+    "rag",
+    "express",
+    "react",
+    "api",
+    "nodejs",
+    "pgvector",
+    "embeddings",
+    "chunking"
+  ],
+  "homepage": "https://github.com/PrakhrS/RAG-Assistant#readme",
+  "bugs": {
+    "url": "https://github.com/PrakhrS/RAG-Assistant/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PrakhrS/RAG-Assistant.git"
+  },
+  "license": "ISC",
+  "author": "Prakhar Soni",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node src/index.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
