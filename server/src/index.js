@@ -8,6 +8,7 @@ import express from 'express';
 import { checkConnection } from './db/index.js';
 import './redis/client.js';
 import errorHandler from './middlewares/error.middleware.js';
+import router from './routes/index.js';
 
 const app = express();
 
@@ -19,9 +20,7 @@ app.use(cors({
 
 app.use(express.json());
 
-app.get('/api/check', (req, res) => {
-  res.status(200).json({ message: 'OK' });
-});
+app.use('/api', router);
 
 // Mount error handler last, after all routes
 app.use(errorHandler);

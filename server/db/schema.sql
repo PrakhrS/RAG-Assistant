@@ -12,6 +12,7 @@ CREATE TABLE IF NOT EXISTS documents (
                 CHECK (status IN ('pending', 'processing', 'completed', 'failed')),
   page_count    INTEGER,
   error_message TEXT,
+  raw_text      TEXT,
   created_at    TIMESTAMPTZ NOT NULL DEFAULT now(),
   updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
 );
