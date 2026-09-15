@@ -4,7 +4,8 @@ import {
   insertDocument,
   updateDocumentStatus,
 } from '../db/documents.queries.js';
-import { extractionQueue } from '../redis/queue.js';
+import { extractionQueue, embeddingQueue } from '../redis/queue.js';
+import { chunkText } from '../utils/chunker.js';
 
 export async function createDocument(file) {
   const document = await insertDocument({
@@ -44,10 +45,21 @@ export async function extractText(documentId, fileBuffer, mimeType) {
       `Extracted ${result.text.length} chars from document ${documentId}`,
     );
 
-    await updateDocumentStatus(documentId, 'completed', {
+    const chunks = chunkText(result.text);
+
+    if (chunks.length === 0) {
+      await updateDocumentStatus(documentId, 'failed', {
+        errorMessage: 'No extractable content found',
+      });
+      return;
+    }
+
+    await updateDocumentStatus(documentId, 'processing', {
       rawText: result.text,
       pageCount: result.pageCount,
     });
+
+    await embeddingQueue.add('embed', { documentId, chunks });
   } catch (err) {
     await updateDocumentStatus(documentId, 'failed', {
       errorMessage: err.message,

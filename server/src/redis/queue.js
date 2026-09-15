@@ -10,6 +10,7 @@ const connection = new Redis(process.env.REDIS_URL, {
 
 export const QUEUE_NAMES = {
   DOCUMENT_EXTRACT: 'document-extract',
+  DOCUMENT_EMBED: 'document-embed',
 };
 
 // BullMQ forbids colons in queue names (reserved as internal key separator).
@@ -22,6 +23,11 @@ export const BULL_PREFIX = 'queue';
 // processes with no shared memory, and no storage bucket is used for file
 // transit. See AGENTS.md for the full rationale.
 export const extractionQueue = new Queue(QUEUE_NAMES.DOCUMENT_EXTRACT, {
+  connection,
+  prefix: BULL_PREFIX,
+});
+
+export const embeddingQueue = new Queue(QUEUE_NAMES.DOCUMENT_EMBED, {
   connection,
   prefix: BULL_PREFIX,
 });

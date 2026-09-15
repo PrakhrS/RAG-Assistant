@@ -30,6 +30,7 @@
     "worker": "node src/worker.js"
   },
   "dependencies": {
+    "@huggingface/transformers": "^4.2.0",
     "bullmq": "^6.3.4",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

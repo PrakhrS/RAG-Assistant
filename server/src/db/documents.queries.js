@@ -47,9 +47,16 @@ export async function updateDocumentStatus(
   status,
   { errorMessage = null, rawText = null, pageCount = null } = {},
 ) {
+  // Note: Using COALESCE prevents overwriting existing data with NULL when not passed.
+  // This means errorMessage cannot be explicitly cleared to NULL if a document
+  // is somehow re-processed, but this is acceptable for the MVP scope.
   const { rows } = await pool.query(
     `UPDATE documents
-     SET status = $1, error_message = $2, raw_text = $3, page_count = $4, updated_at = NOW()
+     SET status = $1,
+         error_message = COALESCE($2, error_message),
+         raw_text = COALESCE($3, raw_text),
+         page_count = COALESCE($4, page_count),
+         updated_at = NOW()
      WHERE id = $5
      RETURNING *`,
     [status, errorMessage, rawText, pageCount, id],
