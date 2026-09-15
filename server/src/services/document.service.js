@@ -8,16 +8,28 @@ import { extractionQueue, embeddingQueue } from '../redis/queue.js';
 import { chunkText } from '../utils/chunker.js';
 
 export async function createDocument(file) {
+  let mimeType = file.mimetype;
+  
+  // Fallback if the HTTP client (like Postman) doesn't set a specific Content-Type
+  if (mimeType === 'application/octet-stream' || !mimeType) {
+    const ext = file.originalname.toLowerCase();
+    if (ext.endsWith('.pdf')) {
+      mimeType = 'application/pdf';
+    } else if (ext.endsWith('.docx')) {
+      mimeType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+    }
+  }
+
   const document = await insertDocument({
     filename: file.originalname,
     fileSize: file.size,
-    mimeType: file.mimetype,
+    mimeType: mimeType,
   });
 
   await extractionQueue.add('extract', {
     documentId: document.id,
     fileBuffer: file.buffer.toString('base64'),
-    mimeType: file.mimetype,
+    mimeType: mimeType,
   });
 
   return document;

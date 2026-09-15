@@ -27,3 +27,10 @@ CREATE TABLE IF NOT EXISTS chunks (
 );
 
 CREATE INDEX IF NOT EXISTS idx_chunks_document_id ON chunks(document_id);
+
+-- Build this AFTER initial data is loaded — HNSW index creation is faster
+-- on existing rows than incremental inserts into an empty index.
+CREATE INDEX IF NOT EXISTS idx_chunks_embedding_hnsw
+  ON chunks
+  USING hnsw (embedding vector_cosine_ops);
+
