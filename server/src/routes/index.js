@@ -5,6 +5,8 @@ import {
   getDocumentStatus,
 } from '../controllers/document.controller.js';
 import { searchDocumentChunks } from '../controllers/search.controller.js';
+import { ask } from '../controllers/answer.controller.js';
+
 
 const router = Router();
 
@@ -15,5 +17,7 @@ router.get('/check', (req, res) => {
 router.post('/documents', upload.single('file'), uploadDocument);
 router.get('/documents/:id', getDocumentStatus);
 router.post('/search', searchDocumentChunks);
+router.post('/ask', ask);
+
 
 export default router;
