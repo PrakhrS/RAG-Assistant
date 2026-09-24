@@ -42,6 +42,16 @@ export async function getDocumentById(id) {
   return toCamelCase(rows[0]);
 }
 
+export async function getDocumentStatusById(id) {
+  const { rows } = await pool.query(
+    `SELECT id, filename, file_size, mime_type, status, page_count,
+            error_message, created_at, updated_at
+     FROM documents WHERE id = $1`,
+    [id],
+  );
+  return toCamelCase(rows[0]);
+}
+
 export async function updateDocumentStatus(
   id,
   status,

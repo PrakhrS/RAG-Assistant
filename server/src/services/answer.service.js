@@ -1,6 +1,7 @@
 import { searchDocument } from './retrieval.service.js';
 import { buildPrompt } from '../utils/promptBuilder.js';
 import { generate } from './llm.service.js';
+import { NO_ANSWER_SENTENCE } from '../utils/noAnswerSentence.js';
 
 /**
  * Orchestrates the retrieval and LLM answer generation pipeline.
@@ -26,7 +27,7 @@ export async function generateAnswer(documentId, question) {
   // 3. Short-circuit if no relevant chunks found
   if (filtered.length === 0) {
     return {
-      answer: "I couldn't find relevant information in the document to answer this question.",
+      answer: NO_ANSWER_SENTENCE,
       answered: false,
       truncated: false,
       sources: [],
@@ -40,6 +41,19 @@ export async function generateAnswer(documentId, question) {
 
   // 5. Call LLM
   const llmResult = await generate(prompt);
+
+  // Normalize: if the LLM parrots the "no answer" sentence exactly, treat it as
+  // answered: false so the client doesn't render sources against a refusal.
+  if (llmResult.text.trim() === NO_ANSWER_SENTENCE) {
+    return {
+      answer: NO_ANSWER_SENTENCE,
+      answered: false,
+      truncated: false,
+      sources: [],
+      provider: llmResult.provider,  // keep — the LLM was called
+      model: llmResult.model,
+    };
+  }
 
   // 6. Shape result
   return {

@@ -2,6 +2,10 @@ import { searchDocument } from '../services/retrieval.service.js';
 import ApiError from '../utils/ApiError.js';
 
 export async function searchDocumentChunks(req, res) {
+  if (!req.body || typeof req.body !== 'object') {
+    throw new ApiError(400, 'Request body is required');
+  }
+
   const { documentId, query, limit } = req.body;
 
   if (!documentId || !query) {

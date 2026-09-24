@@ -1,6 +1,6 @@
 import ApiError from '../utils/ApiError.js';
 import { createDocument } from '../services/document.service.js';
-import { getDocumentById } from '../db/documents.queries.js';
+import { getDocumentStatusById } from '../db/documents.queries.js';
 
 export async function uploadDocument(req, res) {
   if (!req.file) {
@@ -12,7 +12,7 @@ export async function uploadDocument(req, res) {
 }
 
 export async function getDocumentStatus(req, res) {
-  const document = await getDocumentById(req.params.id);
+  const document = await getDocumentStatusById(req.params.id);
 
   if (!document) {
     throw new ApiError(404, 'Document not found');
